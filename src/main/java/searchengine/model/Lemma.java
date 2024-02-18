@@ -10,8 +10,9 @@ public class Lemma {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-@ManyToOne
-    private int site_id;
+    @ManyToOne
+    @JoinColumn(name = "lemma_id")
+    private Site site_id;
 
     @Column(columnDefinition = "VARCHAR(255)", nullable = false)
     private String lemma;
@@ -27,11 +28,11 @@ public class Lemma {
         this.id = id;
     }
 
-    public int getSite_id() {
+    public Site getSite_id() {
         return site_id;
     }
 
-    public void setSite_id(int site) {
+    public void setSite_id(Site site) {
         this.site_id = site;
     }
 

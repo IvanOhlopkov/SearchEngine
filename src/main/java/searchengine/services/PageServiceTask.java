@@ -87,7 +87,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
         Connection connection = document.connection();
         Connection.Response response = connection.response();
 
-        page.setSite_id(siteService.getIdSite(url).getId());
+        page.setSite_id(siteService.getIdSite(url));
         page.setContent(document.toString());
         page.setPath(link);
         page.setCode(response.statusCode());
@@ -138,7 +138,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
                 lemma.setFrequency(lemma.getFrequency() + 1);
             } else {
                 lemma = new Lemma();
-                lemma.setSite_id(siteService.getIdSite(url).getId());
+                lemma.setSite_id(siteService.getIdSite(url));
                 lemma.setLemma(word);
                 lemma.setFrequency(1);
             }

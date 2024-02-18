@@ -11,8 +11,9 @@ public class Page {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int page_id;
 
-    @Column(name = "site_id")
-    private int site_id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "site_id")
+    private Site site_id;
 
     @Column(name = "path", columnDefinition = "TEXT", nullable = false)
     private String path;
@@ -31,11 +32,11 @@ public class Page {
         this.page_id = id;
     }
 
-    public int getSite_id() {
+    public Site getSite_id() {
         return site_id;
     }
 
-    public void setSite_id(int site_id) {
+    public void setSite_id(Site site_id) {
         this.site_id = site_id;
     }
 

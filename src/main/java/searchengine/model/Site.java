@@ -2,6 +2,8 @@ package searchengine.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "site")
@@ -25,6 +27,10 @@ public class Site {
 
     @Column(columnDefinition = "VARCHAR(255)", nullable = false)
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "page_id")
+    List<Page> pages = new ArrayList<Page>();
 
     public int getId() {
         return id;
