@@ -1,0 +1,1 @@
+create index idx_path on page (path(255))
