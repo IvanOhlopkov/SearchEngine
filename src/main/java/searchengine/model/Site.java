@@ -28,9 +28,27 @@ public class Site {
     @Column(columnDefinition = "VARCHAR(255)", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "page_id")
-    List<Page> pages = new ArrayList<Page>();
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "site_id")
+    private List<Page> pages = new ArrayList<Page>();
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "site_id")
+    private List<Lemma> lemmas;
+
+    public List<Lemma> getLemmas() {
+        return lemmas;
+    }
+
+    public void setLemmas(List<Lemma> lemmas) {
+        this.lemmas = lemmas;
+    }
+
+    public List<Page> getPages() {
+        return pages;
+    }
+
+    public void setPages(List<Page> pages) {
+        this.pages = pages;
+    }
 
     public int getId() {
         return id;

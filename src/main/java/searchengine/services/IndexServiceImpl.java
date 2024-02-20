@@ -31,7 +31,8 @@ public class IndexServiceImpl implements IndexService {
 
             siteService.saveNewSite(presetSite);
 
-            Thread thread = new SiteThread(presetSite.getUrl(), siteService);
+            SiteThread thread = new SiteThread(presetSite.getUrl(), siteService);
+            threads.add(thread);
             thread.start();
             response.setResult(true);
         }

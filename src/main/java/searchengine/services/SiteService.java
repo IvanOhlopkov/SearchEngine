@@ -29,6 +29,8 @@ public class SiteService {
     @Autowired
     IndexRepository indexRepository;
 
+    private boolean isCancelTask;
+
     public PageRepository getPageRepository() {
         return pageRepository;
     }
@@ -70,9 +72,9 @@ public class SiteService {
     }
 
     public void deleteDataSite(PresetSite presetSite) {
-        pageRepository.deleteAllBySiteId(siteRepository.findByUrl(presetSite.getUrl()).getId());
+        indexRepository.deleteBySiteId(siteRepository.findByUrl(presetSite.getUrl()));
+        pageRepository.deleteAllBySiteId(siteRepository.findByUrl(presetSite.getUrl()));
         siteRepository.delete(siteRepository.findByUrl(presetSite.getUrl()));
-        indexRepository.delete(indexRepository.findBySiteId(siteRepository.findByUrl(presetSite.getUrl()).getId()));
     }
 
     public Site getIdSite(String url) {
@@ -88,8 +90,12 @@ public class SiteService {
         return siteRepository.findByUrl(editURL);
     }
 
-    public void checkStatus(String url) {
+    public void cancelTask(Boolean isCancel) {
+        isCancelTask = isCancel;
+    }
 
+    public boolean isCancelled(){
+        return isCancelTask;
     }
 
 }

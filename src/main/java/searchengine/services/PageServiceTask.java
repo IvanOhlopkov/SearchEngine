@@ -21,7 +21,6 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
     private volatile SortedSet<String> urlList = new TreeSet<>();
     private volatile HashSet<PageServiceTask> taskList = new HashSet<>();
     private volatile SiteService siteService;
-    private volatile boolean hasStopIndexing = false;
 
     public PageServiceTask(String url, SiteService siteService) {
         this.url = url;
@@ -30,7 +29,8 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
 
     @Override
     protected SortedSet<String> compute() {
-        if (!hasStopIndexing) {
+        System.out.println(siteService.isCancelled());
+        if (!siteService.isCancelled()) {
             Document document = getConnect(url);
             parseElement(document);
 
@@ -45,7 +45,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
     }
 
     public void parseElement(Document document) {
-        if(document == null) {
+        if (document == null) {
             return;
         }
         Elements elements = document.select("a[href]");
@@ -75,12 +75,14 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
             PageServiceTask task = new PageServiceTask(link, siteService);
             task.fork();
             taskList.add(task);
+            System.out.println(taskList);
         }
     }
 
     public boolean findPage(String link) {
         return siteService.getPageRepository().findPageByPath(link) != null;
     }
+
     public void savePage(String link, Document document) {
         Page page = new Page();
 
@@ -112,8 +114,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
         return document;
     }
 
-    public void cancelTask(){
-        hasStopIndexing = true;
+    public void stopIndexing() {
         synchronized (taskList) {
             for (PageServiceTask task : taskList) {
                 task.cancel(true);
@@ -128,12 +129,12 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
 
         Map<String, Integer> lemmaMap = lemmaFinder.getLemma(document.toString());
 
-        for(Map.Entry<String, Integer> entry : lemmaMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : lemmaMap.entrySet()) {
 
             String word = entry.getKey();
             Integer value = entry.getValue();
 
-            Lemma lemma = siteService.getLemmaRepository().findLemma(word, siteService.getIdSite(url).getId());
+            Lemma lemma = siteService.getLemmaRepository().findLemma(word, siteService.getIdSite(url));
             if (lemma != null) {
                 lemma.setFrequency(lemma.getFrequency() + 1);
             } else {
@@ -146,9 +147,9 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
             siteService.getLemmaRepository().save(lemma);
 
             Index index = new Index();
-            index.setPageId(page);
-            index.setLemmaId(siteService.getLemmaRepository()
-                    .findLemma(word, siteService.getIdSite(url).getId()));
+            index.setPage_id(page);
+            index.setLemma_id(siteService.getLemmaRepository()
+                    .findLemma(word, siteService.getIdSite(url)));
             index.setRate(value);
 
             siteService.getIndexRepository().save(index);

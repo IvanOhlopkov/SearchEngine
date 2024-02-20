@@ -2,6 +2,9 @@ package searchengine.model;
 
 import javax.persistence.*;
 import javax.persistence.Index;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "page",
@@ -9,9 +12,9 @@ import javax.persistence.Index;
 public class Page {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int page_id;
+    private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "site_id")
     private Site site_id;
 
@@ -24,12 +27,23 @@ public class Page {
     @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "page_id")
+    private List<searchengine.model.Index> indexes;
+
+    public List<searchengine.model.Index> getIndexes() {
+        return indexes;
+    }
+
+    public void setIndexes(List<searchengine.model.Index> indexes) {
+        this.indexes = indexes;
+    }
+
     public int getId() {
-        return page_id;
+        return id;
     }
 
     public void setId(int id) {
-        this.page_id = id;
+        this.id = id;
     }
 
     public Site getSite_id() {

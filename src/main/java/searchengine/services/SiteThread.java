@@ -26,14 +26,15 @@ public class SiteThread extends Thread {
         }
         if (pageServiceTask.isCancelled()) {
             forkJoinPool.shutdown();
-
-        } else if (pageServiceTask.isDone()) {
+        }
+        if (pageServiceTask.isDone()) {
             siteService.setIndexed(siteService.getSiteRepository().findByUrl(url));
         }
     }
 
     public void stopParsing() {
-        pageServiceTask.cancelTask();
+        pageServiceTask.stopIndexing();
+        siteService.cancelTask(true);
         pageServiceTask.cancel(true);
         siteService.setFailedAfterCancel(siteService.getSiteRepository().findByUrl(url));
     }

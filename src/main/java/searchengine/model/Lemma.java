@@ -1,6 +1,9 @@
 package searchengine.model;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "lemma")
@@ -19,6 +22,17 @@ public class Lemma {
 
     @Column(nullable = false)
     private int frequency;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "lemma_id")
+    private List<Index> indexes;
+
+    public List<Index> getIndexes() {
+        return indexes;
+    }
+
+    public void setIndexes(List<Index> indexes) {
+        this.indexes = indexes;
+    }
 
     public int getId() {
         return id;

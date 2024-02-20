@@ -1,8 +1,5 @@
 package searchengine.model;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 
 @Entity
@@ -14,14 +11,13 @@ public class Index {
     @Column(nullable = false)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "page_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Page pageId;
+    @ManyToOne
+    @JoinColumn(name = "page_id")
+    private Page page_id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lemma_id", nullable = false)
-    private Lemma lemmaId;
+    @ManyToOne
+    @JoinColumn(name = "lemma_id")
+    private Lemma lemma_id;
 
     @Column(nullable = false)
     private float rate;
@@ -34,20 +30,20 @@ public class Index {
         this.id = id;
     }
 
-    public Page getPageId() {
-        return pageId;
+    public Page getPage_id() {
+        return page_id;
     }
 
-    public void setPageId(Page pageId) {
-        this.pageId = pageId;
+    public void setPage_id(Page page_id) {
+        this.page_id = page_id;
     }
 
-    public Lemma getLemmaId() {
-        return lemmaId;
+    public Lemma getLemma_id() {
+        return lemma_id;
     }
 
-    public void setLemmaId(Lemma lemmaId) {
-        this.lemmaId = lemmaId;
+    public void setLemma_id(Lemma lemma_id) {
+        this.lemma_id = lemma_id;
     }
 
     public float getRate() {
