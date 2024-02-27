@@ -7,6 +7,7 @@ import searchengine.config.PresetSite;
 import searchengine.config.PresetSitesList;
 import searchengine.dto.index.IndexResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -42,12 +43,14 @@ public class IndexServiceImpl implements IndexService {
     @Override
     public IndexResponse stopIndexing() {
         IndexResponse response = new IndexResponse();
+        siteService.cancelTask(true);
 
         for (SiteThread siteThread : threads) {
             siteThread.stopParsing();
             response.setResult(true);
+            siteThread.interrupt();
         }
-
+        threads.clear();
         return response;
     }
 

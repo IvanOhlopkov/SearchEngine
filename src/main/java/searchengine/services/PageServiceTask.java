@@ -11,15 +11,13 @@ import searchengine.model.Page;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.RecursiveAction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements PageService {
+public class PageServiceTask extends RecursiveAction {
 
     private final String url;
-    private volatile SortedSet<String> urlList = new TreeSet<>();
-    private volatile HashSet<PageServiceTask> taskList = new HashSet<>();
     private volatile SiteService siteService;
 
     public PageServiceTask(String url, SiteService siteService) {
@@ -28,20 +26,12 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
     }
 
     @Override
-    protected SortedSet<String> compute() {
-        System.out.println(siteService.isCancelled());
-        if (!siteService.isCancelled()) {
-            Document document = getConnect(url);
-            parseElement(document);
-
-            for (PageServiceTask task : taskList) {
-                urlList.add(task.join().toString());
-            }
-        } else {
-            taskList.clear();
-            return urlList;
+    protected void compute() {
+        if (siteService.isCancelled()) {
+            return;
         }
-        return urlList;
+        Document document = getConnect(url);
+        parseElement(document);
     }
 
     public void parseElement(Document document) {
@@ -49,6 +39,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
             return;
         }
         Elements elements = document.select("a[href]");
+        List<PageServiceTask> taskList = new ArrayList<>();
 
         String regex = "^/[a-z0-9-/]+[^#]";
         Pattern pattern = Pattern.compile(regex);
@@ -57,7 +48,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
             String link = element.attr("href");
             Matcher matcher = pattern.matcher(link);
 
-            if (!matcher.find() || link.contains("/#")) {
+            if (!matcher.find() || link.contains("/#") || siteService.isCancelled()) {
                 continue;
             }
 
@@ -70,12 +61,14 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
             }
 
             link = url + link;
-            urlList.add(link);
 
             PageServiceTask task = new PageServiceTask(link, siteService);
             task.fork();
             taskList.add(task);
-            System.out.println(taskList);
+        }
+
+        for (PageServiceTask task : taskList) {
+            task.join();
         }
     }
 
@@ -89,7 +82,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
         Connection connection = document.connection();
         Connection.Response response = connection.response();
 
-        page.setSite_id(siteService.getIdSite(url));
+        page.setSite_id(siteService.getSite(url));
         page.setContent(document.toString());
         page.setPath(link);
         page.setCode(response.statusCode());
@@ -108,18 +101,10 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
                     .get();
         } catch (InterruptedException | IOException e) {
             if (e.getMessage().contains("Status=403")) {
-                urlList.remove(url);
+                return null;
             }
         }
         return document;
-    }
-
-    public void stopIndexing() {
-        synchronized (taskList) {
-            for (PageServiceTask task : taskList) {
-                task.cancel(true);
-            }
-        }
     }
 
     public void findAndSaveLemma(String link, Document document) {
@@ -134,12 +119,12 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
             String word = entry.getKey();
             Integer value = entry.getValue();
 
-            Lemma lemma = siteService.getLemmaRepository().findLemma(word, siteService.getIdSite(url));
+            Lemma lemma = siteService.getLemmaRepository().findLemma(word, siteService.getSite(url));
             if (lemma != null) {
                 lemma.setFrequency(lemma.getFrequency() + 1);
             } else {
                 lemma = new Lemma();
-                lemma.setSite_id(siteService.getIdSite(url));
+                lemma.setSite_id(siteService.getSite(url));
                 lemma.setLemma(word);
                 lemma.setFrequency(1);
             }
@@ -149,7 +134,7 @@ public class PageServiceTask extends RecursiveTask<SortedSet<String>> implements
             Index index = new Index();
             index.setPage_id(page);
             index.setLemma_id(siteService.getLemmaRepository()
-                    .findLemma(word, siteService.getIdSite(url)));
+                    .findLemma(word, siteService.getSite(url)));
             index.setRate(value);
 
             siteService.getIndexRepository().save(index);

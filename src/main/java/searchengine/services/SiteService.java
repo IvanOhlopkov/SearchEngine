@@ -77,7 +77,7 @@ public class SiteService {
         siteRepository.delete(siteRepository.findByUrl(presetSite.getUrl()));
     }
 
-    public Site getIdSite(String url) {
+    public Site getSite(String url) {
         String regex = "^https://[a-z.]+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
@@ -90,6 +90,21 @@ public class SiteService {
         return siteRepository.findByUrl(editURL);
     }
 
+    public Integer getPageCount(Site site) {
+        return pageRepository.getPageCount(site);
+    }
+
+    public Integer getLemmaCount(Site site) {
+        return lemmaRepository.getCountLemma(site);
+    }
+
+    public String getStatusSite(String url) {
+        return siteRepository.getStatusSite(url);
+    }
+
+//    public String getLastErrorSite(String url) {
+//        return siteRepository.getLastErrorSite(url);
+//    }
     public void cancelTask(Boolean isCancel) {
         isCancelTask = isCancel;
     }
