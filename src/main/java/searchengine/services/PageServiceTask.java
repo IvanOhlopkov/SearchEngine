@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 public class PageServiceTask extends RecursiveAction {
 
     private final String url;
+    private volatile HashSet<PageServiceTask> taskList = new HashSet<>();
     private volatile SiteService siteService;
 
     public PageServiceTask(String url, SiteService siteService) {
@@ -27,7 +28,7 @@ public class PageServiceTask extends RecursiveAction {
 
     @Override
     protected void compute() {
-        if (siteService.isCancelled()) {
+        if (siteService.isStoppedIndexing()) {
             return;
         }
         Document document = getConnect(url);
@@ -48,11 +49,11 @@ public class PageServiceTask extends RecursiveAction {
             String link = element.attr("href");
             Matcher matcher = pattern.matcher(link);
 
-            if (!matcher.find() || link.contains("/#") || siteService.isCancelled()) {
+            if (!matcher.find() || link.contains("/#") || siteService.isStoppedIndexing()) {
                 continue;
             }
 
-            synchronized (siteService.getSiteRepository()) {
+            synchronized (siteService.getPageRepository()) {
                 if (findPage(link)) {
                     continue;
                 }
@@ -105,6 +106,14 @@ public class PageServiceTask extends RecursiveAction {
             }
         }
         return document;
+    }
+
+    public void stopIndexing() {
+        synchronized (taskList) {
+            for (PageServiceTask task : taskList) {
+                task.cancel(true);
+            }
+        }
     }
 
     public void findAndSaveLemma(String link, Document document) {

@@ -105,11 +105,11 @@ public class SiteService {
 //    public String getLastErrorSite(String url) {
 //        return siteRepository.getLastErrorSite(url);
 //    }
-    public void cancelTask(Boolean isCancel) {
+    public void hasStopIndexing(Boolean isCancel) {
         isCancelTask = isCancel;
     }
 
-    public boolean isCancelled(){
+    public boolean isStoppedIndexing(){
         return isCancelTask;
     }
 

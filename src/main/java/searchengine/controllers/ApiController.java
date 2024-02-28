@@ -3,9 +3,13 @@ package searchengine.controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import searchengine.dto.index.IndexResponse;
+import searchengine.dto.search.SearchResponse;
 import searchengine.dto.statistics.StatisticsResponse;
 import searchengine.services.IndexService;
+import searchengine.services.SearchService;
 import searchengine.services.StatisticsService;
+
+import javax.persistence.criteria.CriteriaBuilder;
 
 @RestController
 @RequestMapping("/api")
@@ -13,10 +17,12 @@ public class ApiController {
 
     private final StatisticsService statisticsService;
     private final IndexService indexService;
+    private final SearchService searchService;
 
-    public ApiController(StatisticsService statisticsService, IndexService indexService) {
+    public ApiController(StatisticsService statisticsService, IndexService indexService, SearchService searchService) {
         this.statisticsService = statisticsService;
         this.indexService = indexService;
+        this.searchService = searchService;
     }
 
     @GetMapping("/statistics")
@@ -37,5 +43,13 @@ public class ApiController {
     @PostMapping("/indexPage")
     public ResponseEntity<IndexResponse> indexPage(@RequestParam String indexPage) {
         return ResponseEntity.ok(indexService.indexPage(indexPage));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<SearchResponse> search(@RequestParam String query,
+                                                 @RequestParam(required = false) String site,
+                                                 @RequestParam(required = false, defaultValue = "0") int offset,
+                                                 @RequestParam(required = false, defaultValue = "20") int limit){
+        return ResponseEntity.ok(searchService.search(query, site, offset, limit));
     }
 }

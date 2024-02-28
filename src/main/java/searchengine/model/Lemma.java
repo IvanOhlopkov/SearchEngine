@@ -14,7 +14,7 @@ public class Lemma {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "lemma_id")
+    @JoinColumn(name = "site_id")
     private Site site_id;
 
     @Column(columnDefinition = "VARCHAR(255)", nullable = false)

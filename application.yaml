@@ -17,8 +17,8 @@ spring:
 
 indexing-settings:
   sites:
-    - url: https://www.skillbox.ru
-      name: Skillbox
+    - url: https://sadsk.ru
+      name: sad
 
 #connect:
 #  user-agent:

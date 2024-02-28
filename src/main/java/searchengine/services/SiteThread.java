@@ -2,10 +2,8 @@ package searchengine.services;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 
 @RequiredArgsConstructor
 public class SiteThread extends Thread {
@@ -26,17 +24,14 @@ public class SiteThread extends Thread {
         } catch (CancellationException e) {
             e.getMessage();
         }
-        pageServiceTask.join();
-
-        if (pageServiceTask.isCancelled()) {
-            forkJoinPool.shutdownNow();
+        if (pageServiceTask.isCompletedNormally()) {
+            siteService.setIndexed(siteService.getSiteRepository().findByUrl(url));
         }
-        siteService.setIndexed(siteService.getSite(url));
     }
 
     public void stopParsing() {
         pageServiceTask.cancel(true);
-
+        forkJoinPool.shutdownNow();
         siteService.setFailedAfterCancel(siteService.getSiteRepository().findByUrl(url));
     }
 
