@@ -78,7 +78,7 @@ public class SiteService {
     }
 
     public Site getSite(String url) {
-        String regex = "^https://[a-z.]+";
+        String regex = "^https://[a-z0-9.]+";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         String editURL = "";

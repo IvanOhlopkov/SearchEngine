@@ -14,11 +14,12 @@ spring:
       ddl-auto: update
       show-sql: true
       ddl-import_files: import.sql
+    show-sql: true
 
 indexing-settings:
   sites:
-    - url: https://sadsk.ru
-      name: sad
+    - url: https://4hands.ru
+      name: 4Hands
 
 #connect:
 #  user-agent:
