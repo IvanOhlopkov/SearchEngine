@@ -52,7 +52,6 @@ public class IndexServiceImpl implements IndexService {
         for (PresetSite presetSite : siteList) {
             if (siteRepository.findByUrl(presetSite.getUrl()) != null) {
                 deleteFromRepositories(presetSite);
-                //TODO: сюда wait delete?
             }
         }
 
