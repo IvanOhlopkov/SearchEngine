@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=search_engine
+      - MYSQL_ROOT_PASSWORD=Qwer1234
+    volumes:
+      - ~/apps/mysql:/var/lib/mysql

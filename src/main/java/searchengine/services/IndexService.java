@@ -1,8 +1,12 @@
 package searchengine.services;
 
 import searchengine.dto.index.IndexResponse;
-import searchengine.model.Site;
 
+/**
+ * This service start and stop indexing sites
+ *
+ * @author Ivan_Okhlopkov
+ */
 public interface IndexService {
     IndexResponse startIndexing();
 

@@ -28,10 +28,10 @@ public class Site {
     @Column(columnDefinition = "VARCHAR(255)", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "site_id")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "siteId")
     private List<Page> pages = new ArrayList<Page>();
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "site_id")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "siteId")
     private List<Lemma> lemmas;
 
     public List<Lemma> getLemmas() {

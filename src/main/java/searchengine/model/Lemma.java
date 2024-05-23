@@ -1,8 +1,6 @@
 package searchengine.model;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +13,7 @@ public class Lemma {
 
     @ManyToOne
     @JoinColumn(name = "site_id")
-    private Site site_id;
+    private Site siteId;
 
     @Column(columnDefinition = "VARCHAR(255)", nullable = false)
     private String lemma;
@@ -23,7 +21,7 @@ public class Lemma {
     @Column(nullable = false)
     private int frequency;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "lemma_id")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "lemmaId")
     private List<Index> indexes;
 
     public List<Index> getIndexes() {
@@ -42,12 +40,12 @@ public class Lemma {
         this.id = id;
     }
 
-    public Site getSite_id() {
-        return site_id;
+    public Site getSiteId() {
+        return siteId;
     }
 
-    public void setSite_id(Site site) {
-        this.site_id = site;
+    public void setSiteId(Site site) {
+        this.siteId = site;
     }
 
     public String getLemma() {

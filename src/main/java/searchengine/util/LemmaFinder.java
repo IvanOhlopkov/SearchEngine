@@ -1,4 +1,4 @@
-package searchengine.services;
+package searchengine.util;
 
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
@@ -7,6 +7,11 @@ import org.jsoup.Jsoup;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This class get lemmas from html document
+ *
+ * @author Ivan_Okhlopkov
+ */
 public class LemmaFinder {
 
     private static final String[] particlesNames = new String[]{"МЕЖД", "ПРЕДЛ", "СОЮЗ"};

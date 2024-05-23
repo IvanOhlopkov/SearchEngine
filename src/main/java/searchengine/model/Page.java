@@ -2,8 +2,6 @@ package searchengine.model;
 
 import javax.persistence.*;
 import javax.persistence.Index;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,7 +14,7 @@ public class Page {
 
     @ManyToOne
     @JoinColumn(name = "site_id")
-    private Site site_id;
+    private Site siteId;
 
     @Column(name = "path", columnDefinition = "TEXT", nullable = false)
     private String path;
@@ -27,7 +25,7 @@ public class Page {
     @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "page_id")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "pageId")
     private List<searchengine.model.Index> indexes;
 
     public List<searchengine.model.Index> getIndexes() {
@@ -46,12 +44,12 @@ public class Page {
         this.id = id;
     }
 
-    public Site getSite_id() {
-        return site_id;
+    public Site getSiteId() {
+        return siteId;
     }
 
-    public void setSite_id(Site site_id) {
-        this.site_id = site_id;
+    public void setSiteId(Site site_id) {
+        this.siteId = site_id;
     }
 
     public String getPath() {

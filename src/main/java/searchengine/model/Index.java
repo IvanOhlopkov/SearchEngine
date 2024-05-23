@@ -13,11 +13,11 @@ public class Index {
 
     @ManyToOne
     @JoinColumn(name = "page_id")
-    private Page page_id;
+    private Page pageId;
 
     @ManyToOne
     @JoinColumn(name = "lemma_id")
-    private Lemma lemma_id;
+    private Lemma lemmaId;
 
     @Column(nullable = false)
     private float rate;
@@ -30,20 +30,20 @@ public class Index {
         this.id = id;
     }
 
-    public Page getPage_id() {
-        return page_id;
+    public Page getPageId() {
+        return pageId;
     }
 
-    public void setPage_id(Page page_id) {
-        this.page_id = page_id;
+    public void setPageId(Page page_id) {
+        this.pageId = page_id;
     }
 
-    public Lemma getLemma_id() {
-        return lemma_id;
+    public Lemma getLemmaId() {
+        return lemmaId;
     }
 
-    public void setLemma_id(Lemma lemma_id) {
-        this.lemma_id = lemma_id;
+    public void setLemmaId(Lemma lemma_id) {
+        this.lemmaId = lemma_id;
     }
 
     public float getRate() {

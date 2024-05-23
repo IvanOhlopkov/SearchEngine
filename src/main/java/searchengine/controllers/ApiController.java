@@ -9,8 +9,6 @@ import searchengine.services.IndexService;
 import searchengine.services.SearchService;
 import searchengine.services.StatisticsService;
 
-import javax.persistence.criteria.CriteriaBuilder;
-
 @RestController
 @RequestMapping("/api")
 public class ApiController {
@@ -41,15 +39,15 @@ public class ApiController {
     }
 
     @PostMapping("/indexPage")
-    public ResponseEntity<IndexResponse> indexPage(@RequestParam String indexPage) {
-        return ResponseEntity.ok(indexService.indexPage(indexPage));
+    public ResponseEntity<IndexResponse> indexPage(@RequestParam String url) {
+        return ResponseEntity.ok(indexService.indexPage(url));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<SearchResponse> search(@RequestParam String query,
+    public SearchResponse search(@RequestParam String query,
                                                  @RequestParam(required = false) String site,
                                                  @RequestParam(required = false, defaultValue = "0") int offset,
                                                  @RequestParam(required = false, defaultValue = "20") int limit){
-        return ResponseEntity.ok(searchService.search(query, site, offset, limit));
+        return searchService.search(query, site, offset, limit);
     }
 }
