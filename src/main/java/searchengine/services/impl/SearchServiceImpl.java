@@ -22,8 +22,6 @@ import searchengine.services.SearchService;
 import java.util.*;
 
 import static searchengine.util.Variables.CHAR_LENGTH;
-import static searchengine.util.Variables.OCCURE_PERCENT;
-
 
 @RequiredArgsConstructor
 @Service
@@ -228,13 +226,6 @@ public class SearchServiceImpl implements SearchService {
             List<Index> indexListWithOneLemma = new ArrayList<>();
 
             if (getIndexRepository().getAllIndex(lemma).isEmpty()) {
-                continue;
-            }
-
-            if ((double) lemma.getFrequency() / getPageRepository().getPageCount(lemma.getSiteId())
-                > OCCURE_PERCENT) {
-                Index index = indexRepository.getFirstIndexByLemma(lemma);
-                indexList.add(index);
                 continue;
             }
 
