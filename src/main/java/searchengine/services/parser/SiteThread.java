@@ -24,7 +24,6 @@ public class SiteThread extends Thread {
     PageRepository pageRepository;
     LemmaRepository lemmaRepository;
     IndexRepository indexRepository;
-
     public static boolean hasStopIndexing = false;
     private String url;
     private PageServiceTask pageServiceTask;

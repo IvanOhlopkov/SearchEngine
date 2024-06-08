@@ -18,7 +18,6 @@ public class LemmaFinder {
 
     public Map<String, Integer> getLemma(String html){
         String text = cleanHTML(html);
-
         LuceneMorphology luceneMorphology = null;
         try {
             luceneMorphology = new RussianLuceneMorphology();
@@ -26,33 +25,25 @@ public class LemmaFinder {
             throw new RuntimeException(e);
         }
         HashMap<String, Integer> lemmas = new HashMap<>();
-
         String[] wordsArray = arrayContainsRussianWords(text);
-
         for (String word : wordsArray) {
-
             if (word.isBlank()) {
                 continue;
             }
-
             List<String> wordBaseForms = luceneMorphology.getMorphInfo(word);
             if (anyWordBaseBelongToParticle(wordBaseForms)) {
                 continue;
             }
-
             List<String> normalForms = luceneMorphology.getNormalForms(word);
             if (normalForms.isEmpty()) {
                 continue;
             }
-
             String normalWord = normalForms.get(0);
-
             if(lemmas.containsKey(normalWord)) {
                 lemmas.put(normalWord, lemmas.get(normalWord) + 1);
             } else {
                 lemmas.put(normalWord, 1);
             }
-
         }
         return lemmas;
     }

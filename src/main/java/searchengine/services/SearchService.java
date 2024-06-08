@@ -1,6 +1,6 @@
 package searchengine.services;
 
-import searchengine.dto.search.SearchResponse;
+import searchengine.dto.search.SearchResponseDto;
 
 /**
  * This service search lemmas on sites/specified site
@@ -8,5 +8,5 @@ import searchengine.dto.search.SearchResponse;
  * @author Ivan_Okhlopkov
  */
 public interface SearchService {
-    SearchResponse search(String query, String site, int offset, int limit);
+    SearchResponseDto search(String query, String site, int offset, int limit);
 }

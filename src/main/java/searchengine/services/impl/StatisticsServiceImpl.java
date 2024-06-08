@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import searchengine.config.PresetSite;
 import searchengine.config.PresetSitesList;
-import searchengine.dto.statistics.DetailedStatisticsItem;
-import searchengine.dto.statistics.StatisticsData;
-import searchengine.dto.statistics.StatisticsResponse;
-import searchengine.dto.statistics.TotalStatistics;
+import searchengine.dto.statistics.DetailedStatisticsItemDto;
+import searchengine.dto.statistics.StatisticsDataDto;
+import searchengine.dto.statistics.StatisticsResponseDto;
+import searchengine.dto.statistics.TotalStatisticsDto;
 import searchengine.model.Site;
 import searchengine.repository.LemmaRepository;
 import searchengine.repository.PageRepository;
@@ -22,48 +22,34 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Getter
 public class StatisticsServiceImpl implements StatisticsService {
 
-    @Getter
-    @Autowired
-    SiteRepository siteRepository;
-
-    @Getter
-    @Autowired
-    PageRepository pageRepository;
-
-    @Getter
-    @Autowired
-    LemmaRepository lemmaRepository;
-
+    private final SiteRepository siteRepository;
+    private final PageRepository pageRepository;
+    private final LemmaRepository lemmaRepository;
     private final Random random = new Random();
     private final PresetSitesList sites;
 
     @Override
-    public StatisticsResponse getStatistics() {
-
-        TotalStatistics total = new TotalStatistics();
+    public StatisticsResponseDto getStatistics() {
+        TotalStatisticsDto total = new TotalStatisticsDto();
         total.setSites(sites.getSites().size());
         total.setIndexing(true);
-
-        List<DetailedStatisticsItem> detailed = new ArrayList<>();
+        List<DetailedStatisticsItemDto> detailed = new ArrayList<>();
         List<PresetSite> sitesList = sites.getSites();
 
         for(int i = 0; i < sitesList.size(); i++) {
             PresetSite presetSite = sitesList.get(i);
-            DetailedStatisticsItem item = new DetailedStatisticsItem();
+            DetailedStatisticsItemDto item = new DetailedStatisticsItemDto();
             item.setName(presetSite.getName());
             item.setUrl(presetSite.getUrl());
-
             Site site = siteRepository.findByUrl(presetSite.getUrl());
-
             if(site == null) {
                 break;
             }
-
             int pages = getPageRepository().getPageCount(site);
             int lemmas = getLemmaRepository().getCountLemma(site);
-
             item.setPages(pages);
             item.setLemmas(lemmas);
             item.setStatus(site.getStatus().name());
@@ -75,8 +61,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             detailed.add(item);
         }
 
-        StatisticsResponse response = new StatisticsResponse();
-        StatisticsData data = new StatisticsData();
+        StatisticsResponseDto response = new StatisticsResponseDto();
+        StatisticsDataDto data = new StatisticsDataDto();
         data.setTotal(total);
         data.setDetailed(detailed);
         response.setStatistics(data);

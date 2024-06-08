@@ -1,6 +1,6 @@
 package searchengine.services;
 
-import searchengine.dto.statistics.StatisticsResponse;
+import searchengine.dto.statistics.StatisticsResponseDto;
 
 /**
  * This service get statistics from indexing sites
@@ -8,5 +8,5 @@ import searchengine.dto.statistics.StatisticsResponse;
  * @author Ivan_Okhlopkov
  */
 public interface StatisticsService {
-    StatisticsResponse getStatistics();
+    StatisticsResponseDto getStatistics();
 }

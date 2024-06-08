@@ -2,12 +2,11 @@ package searchengine.services.impl;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import searchengine.config.PresetSite;
 import searchengine.config.PresetSitesList;
-import searchengine.dto.index.IndexResponse;
+import searchengine.dto.index.IndexResponseDto;
 import searchengine.model.Site;
 import searchengine.model.StatusSite;
 import searchengine.repository.IndexRepository;
@@ -22,42 +21,31 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Getter
 public class IndexServiceImpl implements IndexService {
 
     private final PresetSitesList sites;
     private final List<SiteThread> threads;
-
-    @Getter
-    @Autowired
-    SiteRepository siteRepository;
-
-    @Autowired
-    IndexRepository indexRepository;
-
-    @Autowired
-    PageRepository pageRepository;
-
-    @Autowired
-    LemmaRepository lemmaRepository;
+    private final SiteRepository siteRepository;
+    private final IndexRepository indexRepository;
+    private final PageRepository pageRepository;
+    private final LemmaRepository lemmaRepository;
 
     @Transactional
     @Override
-    public IndexResponse startIndexing() {
+    public IndexResponseDto startIndexing() {
         List<PresetSite> siteList = sites.getSites();
-        IndexResponse response = new IndexResponse();
+        IndexResponseDto response = new IndexResponseDto();
         if (getSiteRepository() != null) {
             stopThreadsAndWait();
         }
-
         for (PresetSite presetSite : siteList) {
             if (siteRepository.findByUrl(presetSite.getUrl()) != null) {
                 deleteFromRepositories(presetSite);
             }
         }
-
         for (PresetSite presetSite : siteList) {
             saveNewSite(presetSite);
-
             SiteThread thread = new SiteThread(presetSite.getUrl(), siteRepository,
                 pageRepository, lemmaRepository, indexRepository);
             threads.add(thread);
@@ -68,10 +56,9 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public IndexResponse stopIndexing() {
-        IndexResponse response = new IndexResponse();
+    public IndexResponseDto stopIndexing() {
+        IndexResponseDto response = new IndexResponseDto();
         stopThreadsAndWait();
-
         for (Site site : siteRepository.findAll()) {
             if (site.getStatus() == StatusSite.INDEXING) {
                 site.setStatus(StatusSite.FAILED);
@@ -84,19 +71,16 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Transactional
-    public IndexResponse indexPage(String indexPage) {
-        IndexResponse response = new IndexResponse();
+    public IndexResponseDto indexPage(String indexPage) {
+        IndexResponseDto response = new IndexResponseDto();
         for (PresetSite presetSite : sites.getSites()) {
             if (presetSite.getUrl().contains(indexPage)) {
                 response.setResult(true);
-
                 deleteFromRepositories(presetSite);
                 saveNewSite(presetSite);
-
                 Thread thread = new SiteThread(indexPage, siteRepository,
                     pageRepository, lemmaRepository, indexRepository);
                 thread.start();
-                
                 return response;
             }
         }

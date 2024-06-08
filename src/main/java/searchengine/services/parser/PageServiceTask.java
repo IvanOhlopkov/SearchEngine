@@ -38,7 +38,6 @@ public class PageServiceTask extends RecursiveAction {
     private PageRepository pageRepository;
     private LemmaRepository lemmaRepository;
     private IndexRepository indexRepository;
-
     private String url;
     private volatile HashSet<PageServiceTask> taskList = new HashSet<>();
 
@@ -67,35 +66,27 @@ public class PageServiceTask extends RecursiveAction {
         }
         Elements elements = document.select("a[href]");
         List<PageServiceTask> taskList = new ArrayList<>();
-
         String regex = "^/[a-z0-9-/]+[^#/]";
         Pattern pattern = Pattern.compile(regex);
-
         for (Element element : elements) {
             String link = element.attr("href");
             Matcher matcher = pattern.matcher(link);
-
             if (!matcher.find() || link.contains("/#") || SiteThread.hasStopIndexing) {
                 continue;
             }
-
             synchronized (getPageRepository()) {
                 if (findPage(link)) {
                     continue;
                 }
-
                 savePage(link, document);
                 findAndSaveLemma(link, document);
             }
-
             link = url + link;
-
             PageServiceTask task = new PageServiceTask(link, siteRepository,
                 pageRepository, lemmaRepository, indexRepository);
             task.fork();
             taskList.add(task);
         }
-
         for (PageServiceTask task : taskList) {
             task.join();
         }
@@ -107,15 +98,12 @@ public class PageServiceTask extends RecursiveAction {
 
     public void savePage(String link, Document document) {
         Page page = new Page();
-
         Connection connection = document.connection();
         Connection.Response response = connection.response();
-
         page.setSiteId(getSite(url));
         page.setContent(document.toString());
         page.setPath(link);
         page.setCode(response.statusCode());
-
         getPageRepository().save(page);
     }
 
@@ -137,26 +125,14 @@ public class PageServiceTask extends RecursiveAction {
         return document;
     }
 
-    public void stopIndexing() {
-        synchronized (taskList) {
-            for (PageServiceTask task : taskList) {
-                task.cancel(true);
-            }
-        }
-    }
-
     public void findAndSaveLemma(String link, Document document) {
 
         LemmaFinder lemmaFinder = new LemmaFinder();
         Page page = getPageRepository().findPageByPath(link, getSite(url));
-
         Map<String, Integer> lemmaMap = lemmaFinder.getLemma(document.toString());
-
         for (Map.Entry<String, Integer> entry : lemmaMap.entrySet()) {
-
             String word = entry.getKey();
             Integer value = entry.getValue();
-
             Lemma lemma = getLemmaRepository().findLemma(word, getSite(url));
             if (lemma != null) {
                 lemma.setFrequency(lemma.getFrequency() + 1);
@@ -166,15 +142,12 @@ public class PageServiceTask extends RecursiveAction {
                 lemma.setLemma(word);
                 lemma.setFrequency(1);
             }
-
             getLemmaRepository().save(lemma);
-
             Index index = new Index();
             index.setPageId(page);
             index.setLemmaId(getLemmaRepository()
                 .findLemma(word, getSite(url)));
             index.setRate(value);
-
             getIndexRepository().save(index);
         }
     }

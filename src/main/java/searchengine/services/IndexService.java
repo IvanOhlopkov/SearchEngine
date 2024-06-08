@@ -1,6 +1,6 @@
 package searchengine.services;
 
-import searchengine.dto.index.IndexResponse;
+import searchengine.dto.index.IndexResponseDto;
 
 /**
  * This service start and stop indexing sites
@@ -8,9 +8,9 @@ import searchengine.dto.index.IndexResponse;
  * @author Ivan_Okhlopkov
  */
 public interface IndexService {
-    IndexResponse startIndexing();
+    IndexResponseDto startIndexing();
 
-    IndexResponse stopIndexing();
+    IndexResponseDto stopIndexing();
 
-    IndexResponse indexPage(String indexPage);
+    IndexResponseDto indexPage(String indexPage);
 }
