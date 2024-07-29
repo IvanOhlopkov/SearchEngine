@@ -84,11 +84,10 @@ public class IndexServiceImpl implements IndexService {
                 return response;
             }
         }
-            response.setResult(false);
-            response.setError("Данная страница находится за пределами сайтов,\n" +
-                "указанных в конфигурационном файле");
-            return response;
-
+        response.setResult(false);
+        response.setError("Данная страница находится за пределами сайтов,\n" +
+            "указанных в конфигурационном файле");
+        return response;
     }
 
     private void saveNewSite(PresetSite presetSite) {

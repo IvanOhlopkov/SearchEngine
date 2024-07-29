@@ -74,6 +74,7 @@ public class Site {
         this.statusTime = statusTime;
     }
 
+
     public String getLastError() {
         return lastError;
     }
