@@ -118,10 +118,11 @@ public class SearchServiceImpl implements SearchService {
         for (String word : words) {
             int index = ownText.indexOf(word);
             if (index == -1) {
-                findText = ownText.substring(0, CHAR_LENGTH);
+                findText = ownText.length() > CHAR_LENGTH ? ownText.substring(0, CHAR_LENGTH) : ownText;
+                break;
             } else {
-                int left = ownText.substring(0, index).length();
-                int right = ownText.substring(index).length();
+                int left = index;
+                int right = ownText.length() - (index + word.length());
                 String textBefore = ownText.substring(index - Math.min(left, CHAR_LENGTH), index);
                 String textAfter = ownText.substring(index + word.length(),
                     index + word.length() + Math.min(right, CHAR_LENGTH));
@@ -168,22 +169,11 @@ public class SearchServiceImpl implements SearchService {
 
     private List<Index> searchIndex(List<Lemma> lemmaList) {
         List<Index> indexList = new ArrayList<>();
-        String pages = "";
         for (Lemma lemma : lemmaList) {
-            List<Index> indexListWithOneLemma = new ArrayList<>();
             if (getIndexRepository().getAllIndex(lemma).isEmpty()) {
                 continue;
             }
-            if (indexList.isEmpty()) {
-                indexListWithOneLemma.addAll(getIndexRepository().getAllIndex(lemma));
-            } else {
-                indexListWithOneLemma.addAll(getIndexRepository().getIndexFilterPage(lemma, pages));
-            }
-            for (Index index : indexListWithOneLemma) {
-                pages = pages + index.getPageId().getId() + ",";
-            }
-            pages = pages.replaceAll(",$", "");
-            indexList.addAll(indexListWithOneLemma);
+            indexList.addAll(getIndexRepository().getAllIndex(lemma));
         }
         return indexList;
     }
